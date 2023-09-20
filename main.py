@@ -3,7 +3,7 @@ from fastapi import FastAPI, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
 
 # from
-
+import base64
 import cv2
 
 import numpy as np
@@ -18,26 +18,12 @@ app = FastAPI()
 
 def calculate_ssim(image1, image2):
 
- 
-
- 
-
     # Convert images to grayscale
-
     gray1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
 
     gray2 = cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
-
- 
-
- 
-
     # Calculate SSIM
-
     ssim = cv2.matchTemplate(gray1, gray2, cv2.TM_CCOEFF_NORMED)[0][0]
-
- 
-
     return ssim
 
  
@@ -48,7 +34,7 @@ def calculate_ssim(image1, image2):
 
  
 
-@app.post("/compare_images/")
+@app.post("/upload/")
 
 async def compare_images(files: list[UploadFile]):
 
@@ -108,7 +94,7 @@ async def compare_images(files: list[UploadFile]):
 
         return {"similar_count": similar_count+1, "dissimilar_count": dissimilar_count}
 
-@app.post("/upload/")
+@app.post("/compare/")
 async def upload_images(images: list[UploadFile], single_image: UploadFile):
     images_arr = []
 
@@ -127,9 +113,13 @@ async def upload_images(images: list[UploadFile], single_image: UploadFile):
 
          if ssim > threshold:
 
-          print(image)
+          print(image.filename.split(".")[1],"Image content type+++++++++++++++++++++++++++++++++++++++++")
 
-          matching_images.append(image)
+          matching_images.append({
+                "filename": image.filename,
+                "image_base64": image_to_base64(img,"."+image.filename.split(".")[1])  # Convert the matching image to Base64
+          })
+
     return {"matching_images": matching_images}
 
  
@@ -139,7 +129,10 @@ async def upload_images(images: list[UploadFile], single_image: UploadFile):
  
 
  
-
+def image_to_base64(image, type):
+    _, buffer = cv2.imencode(type, image)
+    image_base64 = base64.b64encode(buffer).decode()
+    return image_base64
  
 
  
