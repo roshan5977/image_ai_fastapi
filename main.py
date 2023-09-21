@@ -102,10 +102,6 @@ async def upload_images(images: list[UploadFile], single_image: UploadFile):
  
 
  
-
- 
-
- 
 def image_to_base64(image, type):
     _, buffer = cv2.imencode(type, image)
     image_base64 = base64.b64encode(buffer).decode()
@@ -119,75 +115,3 @@ def image_to_base64(image, type):
  
 
  
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
-# @app.post("/compare_imagess/")
-
-# async def compare_images(files: list[UploadFile]):
-
- 
-
-#         if len(files) < 2:
-
-#             raise HTTPException(status_code=400, detail="You must upload at least 2 images for comparison.")
-
- 
-
-#         images = []
-
-#         for file in files:
-
-#             image_data = np.frombuffer(file.file.read(), np.uint8)
-
-#             image = cv2.imdecode(image_data, cv2.IMREAD_COLOR)
-
-#             images.append(image)
-
- 
-
-#         results = []
-
- 
-
-#         for i, image in enumerate(images):
-
-#             is_similar = False
-
-#             for j in range(i + 1, len(images)):  # Compare to remaining images only
-
-#                 ssim = calculate_ssim(image, images[j])
-
-#                 threshold = 0.9  # Adjust this threshold as needed
-
-#                 if ssim >= threshold:
-
-#                     is_similar = True
-
-#                     break  # If similar to one, no need to compare further
-
-#             results.append({"image_index": i, "is_similar": is_similar})
-
- 
-
-#         return results
